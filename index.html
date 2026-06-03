@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>City Drive</title>
+    <link rel="stylesheet" href="styles.css?v=10">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hud" aria-label="Dashboard">
+        <div class="brand">
+          <span class="mark" aria-hidden="true"></span>
+          <span>City Drive</span>
+        </div>
+        <div class="stat">
+          <span>Score</span>
+          <strong id="score">0</strong>
+        </div>
+        <div class="stat">
+          <span>Points</span>
+          <strong id="points">0</strong>
+        </div>
+        <div class="stat">
+          <span>Speed</span>
+          <strong><span id="speed">0</span> mph</strong>
+        </div>
+        <div class="stat">
+          <span>Damage</span>
+          <strong id="damage">0%</strong>
+        </div>
+        <div class="stat">
+          <span>Mode</span>
+          <strong id="mode">Menu</strong>
+        </div>
+        <button id="restart" class="icon-button" type="button" title="Restart" aria-label="Restart">
+          <span aria-hidden="true">&#8635;</span>
+        </button>
+        <button id="menu" class="icon-button" type="button" title="Menu" aria-label="Menu">
+          <span aria-hidden="true">&#9776;</span>
+        </button>
+      </section>
+
+      <section class="stage" aria-label="City driving game">
+        <canvas id="game" width="1280" height="720"></canvas>
+        <button id="map-toggle" class="mini-map-toggle" type="button" title="Expand mini map" aria-label="Expand mini map">
+          <span aria-hidden="true">&#9635;</span>
+        </button>
+        <div class="touch-controls" id="touch-controls" aria-label="Mobile driving controls">
+          <div class="touch-steer">
+            <button class="touch-button" type="button" data-control="left" aria-label="Steer left">&#9664;</button>
+            <button class="touch-button" type="button" data-control="right" aria-label="Steer right">&#9654;</button>
+          </div>
+          <div class="touch-drive">
+            <button class="touch-button boost" type="button" data-control="boost" aria-label="Boost">B</button>
+            <button class="touch-button" type="button" data-control="throttle" aria-label="Accelerate">&#9650;</button>
+            <button class="touch-button" type="button" data-control="brake" aria-label="Reverse">&#9660;</button>
+          </div>
+        </div>
+        <div class="announcement hidden" id="announcement" aria-live="polite"></div>
+        <div class="overlay" id="overlay">
+          <div class="menu-panel" id="main-menu">
+            <p class="kicker" id="menu-kicker">Endless city</p>
+            <h1 id="menu-title">City Drive</h1>
+            <form class="username-maker" id="username-form">
+              <label>
+                <span>Username</span>
+                <input id="username-input" maxlength="18" autocomplete="nickname" placeholder="Driver name" type="text">
+              </label>
+              <button type="submit">Save</button>
+            </form>
+            <div class="player-tag">Driver <strong id="username-display">Guest Driver</strong></div>
+            <div class="car-select" aria-label="Car select">
+              <button class="car-option selected" type="button" data-car="sport">
+                <span class="car-chip sport"></span>
+                <strong>Sport</strong>
+              </button>
+              <button class="car-option" type="button" data-car="taxi">
+                <span class="car-chip taxi"></span>
+                <strong>Taxi</strong>
+              </button>
+              <button class="car-option" type="button" data-car="cruiser">
+                <span class="car-chip cruiser"></span>
+                <strong>Cruiser</strong>
+              </button>
+              <button class="car-option" type="button" data-car="heavy">
+                <span class="car-chip heavy"></span>
+                <strong>Heavy</strong>
+              </button>
+            </div>
+            <div class="menu-actions">
+              <button id="arcade" type="button">Arcade</button>
+              <button id="sandbox" class="secondary" type="button">Sandbox</button>
+              <button id="battle" type="button">Battle Royale</button>
+              <button id="racing" class="secondary" type="button">Racing</button>
+              <button id="creator" type="button">Create Map</button>
+              <button id="maps" class="secondary" type="button">Maps</button>
+              <button id="shop" class="tertiary" type="button">Shop</button>
+              <button id="report" class="tertiary" type="button">Report Bugs</button>
+              <button id="settings" class="tertiary" type="button">Settings</button>
+              <button id="admin-open" class="admin-entry panel-hidden" type="button">Admin</button>
+            </div>
+          </div>
+
+          <div class="map-panel panel-hidden" id="map-panel">
+            <p class="kicker">World maps</p>
+            <h2>Choose Map</h2>
+            <div class="map-list" id="map-list" aria-label="Map select"></div>
+            <button id="maps-back" class="back-button" type="button">Back</button>
+          </div>
+
+          <div class="creator-panel panel-hidden" id="creator-panel">
+            <p class="kicker">Create your own map</p>
+            <h2>Builder</h2>
+            <form class="form-panel" id="creator-form">
+              <label>
+                <span>Name</span>
+                <input id="custom-map-name" maxlength="24" placeholder="My City" type="text">
+              </label>
+              <label>
+                <span>Seed</span>
+                <input id="custom-map-seed" maxlength="16" placeholder="sunset-7" type="text">
+              </label>
+              <label>
+                <span>Style</span>
+                <select id="custom-map-style">
+                  <option value="tokyo">Tokyo</option>
+                  <option value="newyork">New York</option>
+                  <option value="mountains">Mountains</option>
+                  <option value="hawaii">Hawaii</option>
+                  <option value="arctic">Arctic Circle</option>
+                  <option value="farm">Farm</option>
+                  <option value="island">Deserted Island</option>
+                  <option value="mine">Mine</option>
+                  <option value="canyon">Canyon</option>
+                </select>
+              </label>
+              <div class="form-actions">
+                <button type="submit">Start</button>
+                <button id="creator-back" class="back-button" type="button">Back</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="shop-panel panel-hidden" id="shop-panel">
+            <p class="kicker">Point shop</p>
+            <h2>Cars</h2>
+            <div class="shop-wallet">
+              <span>Points</span>
+              <strong id="shop-points">0</strong>
+            </div>
+            <div class="shop-list" id="shop-list" aria-label="Car shop"></div>
+            <button id="shop-back" class="back-button" type="button">Back</button>
+          </div>
+
+          <div class="report-panel panel-hidden" id="report-panel">
+            <p class="kicker">Report bugs</p>
+            <h2>Report</h2>
+            <form class="form-panel" id="report-form">
+              <label>
+                <span>Description</span>
+                <textarea id="bug-report-text" maxlength="240" placeholder="What happened?"></textarea>
+              </label>
+              <div class="form-actions">
+                <button type="submit">Submit</button>
+                <button id="report-back" class="back-button" type="button">Back</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="admin-panel panel-hidden" id="admin-panel">
+            <p class="kicker">Admin</p>
+            <h2>Tools</h2>
+            <div class="admin-status" id="admin-status"></div>
+            <div class="form-panel">
+              <button id="admin-grant-cars" type="button">Grant Free Cars</button>
+              <label>
+                <span>Give Points</span>
+                <input id="admin-points-amount" min="1" max="999999" step="100" value="1000" type="number">
+              </label>
+              <button id="admin-give-points" type="button">Give Points</button>
+              <label class="toggle-row">
+                <span>Invincibility</span>
+                <input id="admin-invincibility" type="checkbox">
+              </label>
+              <label class="toggle-row">
+                <span>Infinite Points</span>
+                <input id="admin-infinite-points" type="checkbox">
+              </label>
+              <label>
+                <span>Announcement</span>
+                <textarea id="admin-announcement-text" maxlength="160" placeholder="Message to players"></textarea>
+              </label>
+              <div class="form-actions">
+                <button id="admin-send-announcement" type="button">Send</button>
+                <button id="admin-back" class="back-button" type="button">Back</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-panel panel-hidden" id="settings-panel">
+            <p class="kicker">Settings</p>
+            <h2>Garage</h2>
+            <div class="settings-list">
+              <div class="setting-row stacked">
+                <span>Background</span>
+                <div class="swatches" aria-label="Background">
+                  <button class="swatch night selected" type="button" data-bg="night" title="Night" aria-label="Night"></button>
+                  <button class="swatch dusk" type="button" data-bg="dusk" title="Dusk" aria-label="Dusk"></button>
+                  <button class="swatch rain" type="button" data-bg="rain" title="Rain" aria-label="Rain"></button>
+                  <button class="swatch neon" type="button" data-bg="neon" title="Neon" aria-label="Neon"></button>
+                </div>
+              </div>
+              <div class="setting-row stacked">
+                <span>Visual Style</span>
+                <div class="look-options" aria-label="Visual style">
+                  <button class="look-option selected" type="button" data-look="clean">Clean</button>
+                  <button class="look-option" type="button" data-look="cinematic">Cinematic</button>
+                  <button class="look-option" type="button" data-look="retro">Retro</button>
+                  <button class="look-option" type="button" data-look="contrast">Contrast</button>
+                </div>
+              </div>
+            </div>
+            <button id="settings-back" class="back-button" type="button">Back</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="game.js?v=10"></script>
+  </body>
+</html>
